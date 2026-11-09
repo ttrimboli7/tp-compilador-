@@ -1,0 +1,4 @@
+inicio
+identificadorConMasDeTreintaYDosCaracteres := 10;
+esteIdentificadorTambienSuperaElLimitePermitido := 20;
+fin

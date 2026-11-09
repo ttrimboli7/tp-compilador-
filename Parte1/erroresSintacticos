@@ -1,0 +1,13 @@
+inicio
+a := 10
+b := 20;
+c := 10 + ;
+d := ;
+e := 10 20;
+f := (10 + 20;
+g := 10 + 20);
+leer(a;
+escribir(a;
+leer();
+escribir();
+fin

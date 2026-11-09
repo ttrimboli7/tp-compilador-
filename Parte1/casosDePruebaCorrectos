@@ -1,0 +1,17 @@
+inicio
+a := 10;
+b := 20;
+c := a + b;
+d := c - 5;
+e := (a + b) - c;
+f := 100 - 50 + 25;
+g := 0;
+numero1 := 12345;
+variable2 := 50;
+leer(a);
+leer(b,c);
+escribir(a);
+escribir(a,b,c);
+escribir(10,20);
+escribir(a + b);
+fin

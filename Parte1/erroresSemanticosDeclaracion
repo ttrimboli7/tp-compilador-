@@ -1,0 +1,6 @@
+inicio
+a := b + 10;
+escribir(c);
+leer(d);
+e := f - 5;
+fin
