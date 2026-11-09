@@ -2,85 +2,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
-void yyerror(const char *s);
-int yylex(void);
-int total_asignaciones = 0;
+extern char *yytext;
+extern int yyleng;
+extern int yylex(void);
+extern void yyerror(const char*);
 extern int num_linea;
 %}
 
-%union {
-    char* cadena;
-    int num;
+%union{
+   char* cadena;
+   int num;
 }
 
 %token ASIGNACION PYCOMA SUMA RESTA PARENIZQUIERDO PARENDERECHO
 %token <cadena> ID
 %token <num> CONSTANTE
 
-%type <num> expresion primaria operadorAditivo
-
 %%
-
-programa: sentencias
-;
 
 sentencias: sentencias sentencia
 | sentencia
 ;
 
 sentencia: ID {
-    if (strlen($1) > 10) {
-        printf("[Error Semántico - Línea %d]: El identificador '%s' supera los 10 caracteres permitidos.\n", num_linea, $1);
+    /* Rutina semántica: Validación de longitud máxima de 32 caracteres */
+    if (yyleng > 32) {
+        char msg[100];
+        sprintf(msg, "El identificador '%s' supera el límite semántico de 32 caracteres", $1);
+        yyerror(msg);
     }
-    total_asignaciones++;
-} ASIGNACION expresion PYCOMA {
-    printf("-> Asignación correcta procesada para la variable: %s\n", $1);
-    free($1);
-}
-| error PYCOMA {
-    yyerrok;
-}
+} ASIGNACION expresion PYCOMA
 ;
 
-expresion: primaria { $$ = $1; }
-| expresion operadorAditivo primaria {
-    if ($2 == 1) {
-        $$ = $1 + $3;
-    } else {
-        $$ = $1 - $3;
-    }
-}
+expresion: primaria
+| expresion operadorAditivo primaria
 ;
 
-primaria: ID {
-    free($1);
-    $$ = 0;
-}
-| CONSTANTE {
-    if ($1 > 32767) {
-        printf("[Alerta Semántica - Línea %d]: Constante grande detectada: %d\n", num_linea, $1);
-    }
-    $$ = $1;
-}
-| PARENIZQUIERDO expresion PARENDERECHO {
-    $$ = $2;
-}
+primaria: ID
+| CONSTANTE
+| PARENIZQUIERDO expresion PARENDERECHO
 ;
 
-operadorAditivo: SUMA { $$ = 1; }
-| RESTA { $$ = -1; }
+operadorAditivo: SUMA
+| RESTA
 ;
 
 %%
 
 int main() {
-    printf("--- Compilador Micro Iniciado ---\n");
-    yyparse();
-    printf("Análisis concluido. Total de sentencias procesadas: %d\n", total_asignaciones);
+    if (yyparse() == 0) {
+        printf("Compilación finalizada exitosamente.\n");
+    }
     return 0;
 }
 
 void yyerror(const char *s) {
-    fprintf(stderr, "[Error Sintáctico - Línea %d]: Fallo en la estructura de la sentencia (Detalle: %s)\n", num_linea, s);
+    printf("[Error Sintáctico/Semántico - Línea %d]: %s\n", num_linea, s);
 }

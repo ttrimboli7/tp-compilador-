@@ -781,7 +781,7 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 #line 34 "lexer.l"
-;
+; /* Ignora espacios, tabulaciones y retornos de carro */
 	YY_BREAK
 case 10:
 /* rule 10 can match eol */

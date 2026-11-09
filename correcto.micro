@@ -1,2 +1,2 @@
-variable1 := 10 + 20;
-variable2 := variable1 - 5;
+a := 5 + 3;
+b := a - 2;

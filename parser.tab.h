@@ -70,10 +70,10 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 12 "parser.y"
+#line 14 "parser.y"
 
-    char* cadena;
-    int num;
+   char* cadena;
+   int num;
 
 #line 79 "parser.tab.h"
 

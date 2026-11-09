@@ -31,7 +31,7 @@ constEntera   {DIGITO}+
     return ID;
 }
 
-[ \t\r]+      ;
+[ \t\r]+      ; /* Ignora espacios, tabulaciones y retornos de carro */
 \n            { num_linea++; }
 
 . {
