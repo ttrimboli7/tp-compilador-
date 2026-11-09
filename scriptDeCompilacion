@@ -1,0 +1,9 @@
+bison -y -d parser.y
+flex lexer.l
+gcc lex.yy.c y.tab.c -o compilador_micro
+echo "--- correcto.micro ---"
+./compilador_micro < correcto.micro 2>&1
+echo "--- error_lexico.micro ---"
+./compilador_micro < error_lexico.micro 2>&1
+echo "--- error_sintactico_semantico.micro ---"
+./compilador_micro < error_sintactico_semantico.micro 2>&1
