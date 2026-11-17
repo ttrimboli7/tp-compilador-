@@ -1,0 +1,8 @@
+cat correcto.m
+./compilador_micro correcto.m
+
+cat errorLexico.m
+./compilador_micro errorLexico.m
+
+cat errorSintSem.m
+./compilador_micro errorSintSem.m

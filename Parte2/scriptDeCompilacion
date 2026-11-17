@@ -1,3 +1,0 @@
-./compilador_micro < correcto.micro
-./compilador_micro < error_lexico.micro
-./compilador_micro < error_sintactico_semantico.micro
