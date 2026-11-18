@@ -2,4 +2,4 @@
 ./compilador_micro < erroresLexicos
 ./compilador_micro < erroresSintacticos
 ./compilador_micro < erroresSemanticos
-./compilador_micro < erroresSemanticosDeclaracion
+

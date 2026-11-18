@@ -51,56 +51,36 @@ extern int yydebug;
   enum yytokentype
   {
     YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
+    END = 0,                       /* "fin de archivo"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    INICIO = 258,                  /* INICIO  */
-    FIN = 259,                     /* FIN  */
-    LEER = 260,                    /* LEER  */
-    ESCRIBIR = 261,                /* ESCRIBIR  */
-    ASIGNACION = 262,              /* ASIGNACION  */
-    PYCOMA = 263,                  /* PYCOMA  */
-    COMA = 264,                    /* COMA  */
-    SUMA = 265,                    /* SUMA  */
-    RESTA = 266,                   /* RESTA  */
-    PARENIZQUIERDO = 267,          /* PARENIZQUIERDO  */
-    PARENDERECHO = 268,            /* PARENDERECHO  */
-    ERROR_LEXICO = 269,            /* ERROR_LEXICO  */
-    ID = 270,                      /* ID  */
-    CONSTANTE = 271                /* CONSTANTE  */
+    INICIO = 258,                  /* "inicio"  */
+    FIN = 259,                     /* "fin"  */
+    LEER = 260,                    /* "leer"  */
+    ESCRIBIR = 261,                /* "escribir"  */
+    ASIGNACION = 262,              /* "asignacion (:=)"  */
+    PYCOMA = 263,                  /* "punto y coma"  */
+    COMA = 264,                    /* "coma"  */
+    SUMA = 265,                    /* "operador +"  */
+    RESTA = 266,                   /* "operador -"  */
+    PARENIZQUIERDO = 267,          /* "parentesis izquierdo"  */
+    PARENDERECHO = 268,            /* "parentesis derecho"  */
+    ID = 269,                      /* "identificador"  */
+    CONSTANTE = 270                /* "constante"  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Token kinds.  */
-#define YYEMPTY -2
-#define YYEOF 0
-#define YYerror 256
-#define YYUNDEF 257
-#define INICIO 258
-#define FIN 259
-#define LEER 260
-#define ESCRIBIR 261
-#define ASIGNACION 262
-#define PYCOMA 263
-#define COMA 264
-#define SUMA 265
-#define RESTA 266
-#define PARENIZQUIERDO 267
-#define PARENDERECHO 268
-#define ERROR_LEXICO 269
-#define ID 270
-#define CONSTANTE 271
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 61 "parser1.y"
+#line 65 "parser1.y"
 
     char* cadena;
     int num;
 
-#line 104 "y.tab.h"
+#line 84 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

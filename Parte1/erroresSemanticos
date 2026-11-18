@@ -1,4 +1,6 @@
 inicio
-identificadorConMasDeTreintaYDosCaracteres := 10;
-esteIdentificadorTambienSuperaElLimitePermitido := 20;
+a := a + 1;
+leer(b);
+c := b + 1;
+d := c + e;
 fin

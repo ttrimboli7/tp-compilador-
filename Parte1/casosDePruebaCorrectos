@@ -1,17 +1,11 @@
 inicio
-a := 10;
-b := 20;
-c := a + b;
-d := c - 5;
-e := (a + b) - c;
-f := 100 - 50 + 25;
-g := 0;
-numero1 := 12345;
-variable2 := 50;
-leer(a);
-leer(b,c);
-escribir(a);
-escribir(a,b,c);
-escribir(10,20);
-escribir(a + b);
+leer(a, b);
+c := a + (b - 2);
+d := 10;
+e := (a + b) - (c - d) + 4;
+resultado := e + 100 - d;
+identificadorDeTreintaYDosLetras := 5;
+escribir(c, d, e);
+escribir(a + 4, resultado - 1);
+escribir(identificadorDeTreintaYDosLetras);
 fin

@@ -5,33 +5,34 @@
 
 extern char *yytext;
 extern int yylex(void);
-extern void yyerror(const char*);
 extern int num_linea;
+void yyerror(const char *s);
 
-/* --- ESTRUCTURA DE LA TABLA DE SIMBOLOS --- */
+int errLexicos = 0;
+int errSintacticos = 0;
+int errSemanticos = 0;
+
+#define MAX_SIMBOLOS 1000
 
 typedef struct {
     char nombre[33];
     int inicializada;
 } Simbolo;
 
-Simbolo tablaSimbolos[100];
+Simbolo tablaSimbolos[MAX_SIMBOLOS];
 int cantSimbolos = 0;
 
-/* --- RUTINAS SEMANTICAS AUXILIARES --- */
-
 int procesarIdentificador(char* id) {
-    if (strlen(id) > 32) {
-        char msg[128];
-        sprintf(msg, "El identificador '%s' excede el limite semantico de 32 caracteres.", id);
-        yyerror(msg);
-        return -1;
-    }
-
     for (int i = 0; i < cantSimbolos; i++) {
         if (strcmp(tablaSimbolos[i].nombre, id) == 0) {
             return i;
         }
+    }
+
+    if (cantSimbolos >= MAX_SIMBOLOS) {
+        printf(">> [Error Semantico - Linea %d]: La tabla de simbolos esta llena.\n", num_linea);
+        errSemanticos++;
+        return -1;
     }
 
     strcpy(tablaSimbolos[cantSimbolos].nombre, id);
@@ -53,7 +54,10 @@ void verificarInicializacion(char* id) {
     int idx = procesarIdentificador(id);
 
     if (idx != -1 && tablaSimbolos[idx].inicializada == 0) {
-        printf(">> [Advertencia Semantica - Linea %d]: La variable '%s' se esta usando sin haber sido inicializada previamente.\n", num_linea, id);
+        printf(">> [Error Semantico - Linea %d]: La variable '%s' se usa sin haber recibido un valor (no se leyo ni se le asigno antes).\n",
+               num_linea, id);
+        errSemanticos++;
+        tablaSimbolos[idx].inicializada = 1;
     }
 }
 %}
@@ -63,18 +67,27 @@ void verificarInicializacion(char* id) {
     int num;
 }
 
-%token INICIO FIN LEER ESCRIBIR
-%token ASIGNACION PYCOMA COMA SUMA RESTA PARENIZQUIERDO PARENDERECHO
-%token ERROR_LEXICO
+%define parse.error verbose
 
-%token <cadena> ID
-%token <num> CONSTANTE
+%token END 0 "fin de archivo"
+%token INICIO "inicio"
+%token FIN "fin"
+%token LEER "leer"
+%token ESCRIBIR "escribir"
+%token ASIGNACION "asignacion (:=)"
+%token PYCOMA "punto y coma"
+%token COMA "coma"
+%token SUMA "operador +"
+%token RESTA "operador -"
+%token PARENIZQUIERDO "parentesis izquierdo"
+%token PARENDERECHO "parentesis derecho"
+
+%token <cadena> ID "identificador"
+%token <num> CONSTANTE "constante"
 
 %%
 
-programa: INICIO listaSentencias FIN {
-    printf("\n--- Analisis Semantico y Sintactico Finalizado ---\n");
-}
+programa: INICIO listaSentencias FIN
 ;
 
 listaSentencias:
@@ -88,10 +101,8 @@ sentencia:
     }
     | LEER PARENIZQUIERDO listaIdentificadores PARENDERECHO PYCOMA
     | ESCRIBIR PARENIZQUIERDO listaExpresiones PARENDERECHO PYCOMA
-
-    /* Recuperacion ante errores: descarta hasta encontrar ';' */
     | error PYCOMA {
-        fprintf(stderr, ">> Se descarto la sentencia incorrecta en la linea %d.\n", num_linea);
+        printf(">> Se descarto la sentencia incorrecta (hasta la linea %d).\n", num_linea);
         yyerrok;
     }
 ;
@@ -130,11 +141,66 @@ operadorAditivo:
 
 %%
 
-int main() {
-    printf("Iniciando compilador de Lenguaje Micro...\n\n");
-    return yyparse();
+static void traducirEsperado(char *dst, size_t n, const char *src) {
+    size_t j = 0;
+    while (*src && j + 4 < n) {
+        if (strncmp(src, " or ", 4) == 0) {
+            memcpy(dst + j, " o ", 3);
+            j += 3;
+            src += 4;
+        } else {
+            dst[j++] = *src++;
+        }
+    }
+    dst[j] = '\0';
 }
 
 void yyerror(const char *s) {
-    fprintf(stderr, ">> [Error Sintactico/Semantico - Linea %d]: %s\n", num_linea, s);
+    const char *inesperado = strstr(s, "unexpected ");
+    const char *esperado = strstr(s, ", expecting ");
+    char encontrado[128] = "";
+    char lista[256] = "";
+
+    errSintacticos++;
+    printf(">> [Error Sintactico - Linea %d]: ", num_linea);
+
+    if (inesperado) {
+        size_t len;
+        inesperado += strlen("unexpected ");
+        len = esperado ? (size_t)(esperado - inesperado) : strlen(inesperado);
+        if (len >= sizeof encontrado) len = sizeof encontrado - 1;
+        memcpy(encontrado, inesperado, len);
+        encontrado[len] = '\0';
+
+        printf("se encontro %s", encontrado);
+        if (strcmp(encontrado, "identificador") == 0 || strcmp(encontrado, "constante") == 0) {
+            printf(" '%s'", yytext);
+        }
+    } else {
+        printf("%s", s);
+    }
+
+    if (esperado) {
+        esperado += strlen(", expecting ");
+        traducirEsperado(lista, sizeof lista, esperado);
+        printf(", se esperaba %s", lista);
+    }
+    printf(".\n");
+}
+
+int main() {
+    int ret, total;
+
+    printf("Iniciando compilador de Lenguaje Micro...\n\n");
+    ret = yyparse();
+    total = errLexicos + errSintacticos + errSemanticos;
+
+    printf("\n");
+    if (total == 0 && ret == 0) {
+        printf("--- Compilacion exitosa: 0 errores ---\n");
+        return 0;
+    }
+    printf("--- Compilacion con errores: %d lexico(s), %d sintactico(s), %d semantico(s) ---\n",
+           errLexicos, errSintacticos, errSemanticos);
+    return 1;
 }
