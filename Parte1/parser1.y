@@ -53,7 +53,7 @@ void marcarInicializada(char* id) {
 void verificarInicializacion(char* id) {
     int idx = procesarIdentificador(id);
 
-    if (idx != -1 && tablaSimbolos[idx].inicializada == 0) {
+    if (idx != -1 && tablaSimbolos[idx].inicializada == 0 && errSintacticos == 0) {
         printf(">> [Error Semantico - Linea %d]: La variable '%s' se usa sin haber recibido un valor (no se leyo ni se le asigno antes).\n",
                num_linea, id);
         errSemanticos++;
